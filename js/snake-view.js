@@ -9,7 +9,18 @@ const phrases = [
   "I AM NICE SNEK.",
   "SHUT UP CHILDREN YOU'RE GIVING GOD A HEADACHE",
   "No, but, really, Eve, come try this apple. It's delish.",
-  "I wish God would plant more quinoa."
+  "I wish God would plant more quinoa.",
+  "I can't wait for the next episode of Xena to come out",
+  "Eve pls.",
+  "Adam plx.",
+  "Oh yah there's this neato bobeeto star that shows up in the morning but idk what its deal is.",
+  "I sure hope our progeny don't suffer from massive floods caused by a vengeful father figure.",
+  "Boop boop boop.",
+  "I don't know what progeny are.",
+  "My favorite part of the chicken is the nugget.",
+  "God why are we not allowed to call you daddy?",
+  "Don't call me daddy, it's weird and I can't tell you why. Also don't eat that apple",
+  "God plz."
 ];
 const audio = new Audio('js/eat.mp3');
 
@@ -70,7 +81,7 @@ class View {
     this.board.generateApple();
     this.score += 10;
     $('.score').html(this.score);
-    $('.phrase').html(phrases[Math.floor(Math.random() * 9)])
+    $('.phrase').html(phrases[Math.floor(Math.random() * 20)])
     .css({top: randomPercent(), left: randomPercent()});
   }
 
