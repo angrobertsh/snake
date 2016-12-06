@@ -50,12 +50,27 @@
 	$( () => {
 	  let view = new View($('.snake'));
 	  renderScores();
-	  $(document).keypress((e) => handleKeyEvent(e, view));
-	  $('.reset').on('click', function() {
+	  $(document).keypress((e) => {
+	    if (event.keyCode === 32) {
+	      pauseGame(view);
+	    } else if (event.keyCode === 114){
+	      clearGame(view);
+	      view = new View($('.snake'));
+	      renderScores();
+	    }
+	  });
+	  // annoying workaround for weird browser behavior - button is activated by space/pause
+	  $('.reset').on('keyup', function(e) {
+	    e.preventDefault();
+	  });
+
+	  $('.reset').on('click', function(e) {
+	    e.preventDefault();
 	    gameOver(view);
 	    view = new View($('.snake'));
 	    renderScores();
 	  });
+
 	});
 
 	function renderScores() {
@@ -72,10 +87,8 @@
 	  });
 	}
 
-
 	function gameOver(view) {
-	  view.quit();
-	  $('.snake').html("");
+	  clearGame(view);
 	  let name = prompt("Enter Your Name", "");
 	  if (highscores) {
 	    let score = highscores[name];
@@ -102,10 +115,9 @@
 	  }
 	}
 
-	function handleKeyEvent(event, view) {
-	  if (event.keyCode === 32) {
-	    pauseGame(view);
-	  }
+	function clearGame(view) {
+	  view.quit();
+	  $('.snake').html("");
 	}
 
 
@@ -156,26 +168,29 @@
 	  }
 
 	  handleKeyEvent (event) {
-	    if (this.updateTurn) {
-	      return;
-	    }
+	    // if(this.updateTurn){
+	    //   return;
+	    // }
+	    // this.updateTurn = true;
 	    let code = event.keyCode;
 	    switch (code) {
 	      case 97:
-	        this.snake.turn([0,-1]);
+	        this.updateTurn = this.snake.turn([0,-1]);
 	        break;
 	      case 119:
-	        this.snake.turn([-1,0]);
+	        this.updateTurn = this.snake.turn([-1,0]);
 	        break;
 	      case 100:
-	        this.snake.turn([0,1]);
+	        this.updateTurn = this.snake.turn([0,1]);
 	        break;
 	      case 115:
-	        this.snake.turn([1,0]);
+	        this.updateTurn = this.snake.turn([1,0]);
 	        break;
 	      default:
 	    }
-	    this.updateTurn = true;
+	    // if(this.updateTurn){
+	    //   this.step();
+	    // }
 	  }
 
 	  step() {
@@ -188,7 +203,7 @@
 	      this.eatApple();
 	    }
 	    this.board.render();
-	    this.updateTurn = false;
+	    // this.updateTurn = false;
 	  }
 
 	  eatApple() {
@@ -225,6 +240,8 @@
 	// w = 119
 	// d = 100
 	// s = 115
+	// r = 114
+	// space = 32
 
 
 /***/ },
@@ -299,6 +316,7 @@
 	  constructor() {
 	    this.direction = [-1,0];
 	    this.segments = [ new Coord([10,10]),new Coord([11,10]), new Coord([12,10]), new Coord([13,10]), new Coord([14,10]) ];
+	    this.moveQueue = [];
 	  }
 
 	  move(apples) {
@@ -306,7 +324,12 @@
 	      return;
 	    }
 	    let first = this.segments[0].clone();
-	    first.plus(this.direction);
+
+	    if(this.moveQueue.length > 0){
+	      first.plus(this.moveQueue.shift());
+	    } else {
+	      first.plus(this.direction);
+	    }
 
 	    for(let i = 0; i < this.segments.length; i++)
 	    {
@@ -344,10 +367,16 @@
 
 
 	  turn(dir) {
-	    if (this.direction[0] === (dir[0] * -1) || this.direction[1] === (dir[1] * -1)) {
-	      return;
+	    if (this.direction[0] === (dir[0] * -1) || this.direction[1] === (dir[1] * -1) || (this.direction[0] === dir[0] && this.direction[1] === dir[1])) {
+	      return false;
 	    }
 	    this.direction = dir;
+
+	    if(this.moveQueue.length < 2){
+	      this.moveQueue.push(dir);
+	    }
+
+	    return true;
 	  }
 	}
 

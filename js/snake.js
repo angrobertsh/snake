@@ -5,6 +5,7 @@ class Snake {
   constructor() {
     this.direction = [-1,0];
     this.segments = [ new Coord([10,10]),new Coord([11,10]), new Coord([12,10]), new Coord([13,10]), new Coord([14,10]) ];
+    this.moveQueue = [];
   }
 
   move(apples) {
@@ -12,7 +13,12 @@ class Snake {
       return;
     }
     let first = this.segments[0].clone();
-    first.plus(this.direction);
+
+    if(this.moveQueue.length > 0){
+      first.plus(this.moveQueue.shift());
+    } else {
+      first.plus(this.direction);
+    }
 
     for(let i = 0; i < this.segments.length; i++)
     {
@@ -50,10 +56,16 @@ class Snake {
 
 
   turn(dir) {
-    if (this.direction[0] === (dir[0] * -1) || this.direction[1] === (dir[1] * -1)) {
-      return;
+    if (this.direction[0] === (dir[0] * -1) || this.direction[1] === (dir[1] * -1) || (this.direction[0] === dir[0] && this.direction[1] === dir[1])) {
+      return false;
     }
     this.direction = dir;
+
+    if(this.moveQueue.length < 2){
+      this.moveQueue.push(dir);
+    }
+
+    return true;
   }
 }
 

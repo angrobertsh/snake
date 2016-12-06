@@ -4,12 +4,27 @@ let highscores = JSON.parse(localStorage.getItem('snake'));
 $( () => {
   let view = new View($('.snake'));
   renderScores();
-  $(document).keypress((e) => handleKeyEvent(e, view));
-  $('.reset').on('click', function() {
+  $(document).keypress((e) => {
+    if (event.keyCode === 32) {
+      pauseGame(view);
+    } else if (event.keyCode === 114){
+      clearGame(view);
+      view = new View($('.snake'));
+      renderScores();
+    }
+  });
+  // annoying workaround for weird browser behavior - button is activated by space/pause
+  $('.reset').on('keyup', function(e) {
+    e.preventDefault();
+  });
+
+  $('.reset').on('click', function(e) {
+    e.preventDefault();
     gameOver(view);
     view = new View($('.snake'));
     renderScores();
   });
+
 });
 
 function renderScores() {
@@ -26,10 +41,8 @@ function renderScores() {
   });
 }
 
-
 function gameOver(view) {
-  view.quit();
-  $('.snake').html("");
+  clearGame(view);
   let name = prompt("Enter Your Name", "");
   if (highscores) {
     let score = highscores[name];
@@ -56,8 +69,7 @@ function pauseGame(view) {
   }
 }
 
-function handleKeyEvent(event, view) {
-  if (event.keyCode === 32) {
-    pauseGame(view);
-  }
+function clearGame(view) {
+  view.quit();
+  $('.snake').html("");
 }

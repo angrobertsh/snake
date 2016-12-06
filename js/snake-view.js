@@ -41,26 +41,29 @@ class View {
   }
 
   handleKeyEvent (event) {
-    if (this.updateTurn) {
-      return;
-    }
+    // if(this.updateTurn){
+    //   return;
+    // }
+    // this.updateTurn = true;
     let code = event.keyCode;
     switch (code) {
       case 97:
-        this.snake.turn([0,-1]);
+        this.updateTurn = this.snake.turn([0,-1]);
         break;
       case 119:
-        this.snake.turn([-1,0]);
+        this.updateTurn = this.snake.turn([-1,0]);
         break;
       case 100:
-        this.snake.turn([0,1]);
+        this.updateTurn = this.snake.turn([0,1]);
         break;
       case 115:
-        this.snake.turn([1,0]);
+        this.updateTurn = this.snake.turn([1,0]);
         break;
       default:
     }
-    this.updateTurn = true;
+    // if(this.updateTurn){
+    //   this.step();
+    // }
   }
 
   step() {
@@ -73,7 +76,7 @@ class View {
       this.eatApple();
     }
     this.board.render();
-    this.updateTurn = false;
+    // this.updateTurn = false;
   }
 
   eatApple() {
@@ -110,3 +113,5 @@ module.exports = View;
 // w = 119
 // d = 100
 // s = 115
+// r = 114
+// space = 32
